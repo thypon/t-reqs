@@ -1,4 +1,7 @@
 # T-Reqs HTTP Fuzzer
+
+Original project: https://github.com/bahruzjabiyev/t-reqs
+
 T-Reqs (**T**wo **Req**uest**s**) is a grammar-based HTTP Fuzzer written as a part of the [paper](https://bahruz.me/papers/ccs2021treqs.pdf) titled "T-Reqs: HTTP Request Smuggling with Differential Fuzzing" which was presented at [ACM CCS 2021](https://www.sigsac.org/ccs/CCS2021/accepted-papers.html).
 
 <p align="center">
