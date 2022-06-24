@@ -71,7 +71,7 @@ class InputTree:
         if partial:#request in its most basic form -- with placeholder values.
             return self.request
 
-        self.host, self.port, self.authority, self.uri = _parse_url(self.url)
+        self.host, self.port, self.authority, self.uri, self.scheme = _parse_url(self.url)
         if self.host_header is None:
             self.host_header = self.authority
 

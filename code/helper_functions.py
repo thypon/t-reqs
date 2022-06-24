@@ -3,20 +3,33 @@ import linecache
 import configargparse
 import random
 
+try:
+    from urllib.parse import urlparse # for Python 3
+except ImportError:
+    from urlparse import urlparse # for Python 2 and Jython
+
 def _parse_url(url):
     """ This function extracts certain 
         components from a given URL.
     """
-    authority = url.split('/')[2]
-    uri = '/'.join(url.split('/')[3:])
+    u = urlparse(url)
+    authority = u.netloc
+    uri = u.path[1:]+'?'+u.query
 
     if ':' not in authority:
-        port = 80
         host = authority
     else:
-        host, port = authority.split(':')
+        host, _ = authority.split(':')
 
-    return host, port, authority, uri
+    if u.scheme == 'https':
+        port = 443
+    else:
+        port = 43
+
+    if u.port:
+        port = u.port
+
+    return host, port, authority, uri, u.scheme
 
 def _print_exception(extra_details=[]):
     """ This function prints exception details

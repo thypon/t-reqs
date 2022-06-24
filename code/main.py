@@ -5,6 +5,7 @@ import socket
 import threading
 from multiprocessing import Process, Queue
 import time
+import ssl
 
 from input_tree_node import Node
 from input_tree import InputTree
@@ -35,21 +36,29 @@ class Fuzzer:
         try:
             request = inputdata.tree_to_request()
             _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            _socket.connect((inputdata.host, int(inputdata.port)))
-
-            _socket.sendall(request)
             _socket.settimeout(4)
+
+            _wsocket = _socket
+
+            print(inputdata.host, inputdata.port, inputdata.scheme)
+
+            if inputdata.scheme == 'https':
+                context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+                _wsocket = context.wrap_socket(_socket, server_hostname=inputdata.host)
+
+            _wsocket.connect((inputdata.host, int(inputdata.port)))
+            _wsocket.sendall(request)
 
             response = b''
             while True:
-                data = _socket.recv(2048)
+                data = _wsocket.recv(2048)
                 if not data:
                     break
                 else:
                     response += data
 
-            _socket.shutdown(socket.SHUT_RDWR)
-            _socket.close()
+            _wsocket.shutdown(socket.SHUT_RDWR)
+            _wsocket.close()
 
             with self.lock:
                 list_responses.append(response)
